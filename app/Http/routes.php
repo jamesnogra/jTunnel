@@ -43,5 +43,5 @@ Route::group(['middleware' => ['web']], function () {
     Route::post('/login', 'UserController@postLogin');
     Route::get('/logout', 'UserController@logout');
 
-    Route::get('/my-tunnels', 'UserController@myTunnels');
+    Route::get('/my-tunnels', 'UserController@myTunnels'); 
 });
