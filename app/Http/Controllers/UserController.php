@@ -21,14 +21,46 @@ class UserController extends Controller
 
     public function postRegister(Request $request) {
         $emailInput = $request->input('email');
+        $emailEncrypted = Crypt::encrypt($emailInput);
 
         $new_user = new User;
         $new_user->email = $emailInput;
-        $new_user->active = Crypt::encrypt($emailInput);
+        $new_user->active = $emailEncrypted;
         $new_user->picture = "default.png";
         $new_user->save();
 
+        $this->sendConfirmationRegistrationEmail($emailInput, $emailEncrypted);
+
         return view('register-email-successful', ['email'=>$emailInput]);
+    }
+
+    public function sendConfirmationRegistrationEmail($email, $emailEncrypted) {
+        $to = $email;
+        $linkRgistration = action("UserController@registerContinue", [$emailEncrypted]);
+        $subject = "jTunnel - Registration Email Confirmation";
+
+        $message = "
+            <html>
+                <head>
+                    <title>jTunnel - Registration Email Confirmation</title>
+                </head>
+                <body>
+                    <div style='color:#FFFFFF;background-color:#3f51b5;padding:10px;'>
+                        jTunnel - Registration Email Confirmation
+                    </div>
+                    <div style='padding:10px;'>
+                        To continue your registration, please <a href='$linkRgistration'>CLICK THIS LINK</a> or open this URL in a browser: ".$linkRgistration."
+                    </div>
+                </body>
+            </html>
+        ";
+
+        // Always set content-type when sending HTML email
+        $headers = "MIME-Version: 1.0" . "\r\n";
+        $headers .= "Content-type:text/html;charset=UTF-8" . "\r\n";
+        $headers .= 'From: <admin@therookieblog.com>' . "\r\n";
+
+        mail($to,$subject,$message,$headers);
     }
 
     public function registerContinue($token) {

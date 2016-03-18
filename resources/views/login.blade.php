@@ -46,5 +46,6 @@
             }
             return true;
         }
+
     </script>
 @endsection
