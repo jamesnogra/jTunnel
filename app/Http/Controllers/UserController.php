@@ -75,7 +75,7 @@ class UserController extends Controller
             return view('register-no-email-match');
         }
         //$checkIfRegistered = User::where('email', $registeredEmail)->first();
-        $checkIfRegistered = User::where('id', ($user_id)->first();
+        $checkIfRegistered = User::where('id', $user_id)->first();
         if (count($checkIfRegistered) == 0) {
             return view('register-no-email-match');
         }
