@@ -21,22 +21,23 @@ class UserController extends Controller
 
     public function postRegister(Request $request) {
         $emailInput = $request->input('email');
-        $emailEncrypted = Crypt::encrypt($emailInput);
+        //$emailEncrypted = Crypt::encrypt($emailInput);
 
         $new_user = new User;
         $new_user->email = $emailInput;
         $new_user->active = $emailEncrypted;
         $new_user->picture = "default.png";
         $new_user->save();
+        $id_encrypted = Crypt::encrypt($new_user->id);
 
-        $this->sendConfirmationRegistrationEmail($emailInput, $emailEncrypted);
+        $this->sendConfirmationRegistrationEmail($emailInput, $id_encrypted);
 
         return view('register-email-successful', ['email'=>$emailInput]);
     }
 
-    public function sendConfirmationRegistrationEmail($email, $emailEncrypted) {
+    public function sendConfirmationRegistrationEmail($email, $id_encrypted) {
         $to = $email;
-        $linkRgistration = action("UserController@registerContinue", [$emailEncrypted]);
+        $linkRgistration = action("UserController@registerContinue", [$id_encrypted]);
         $subject = "jTunnel - Registration Email Confirmation";
 
         $message = "
@@ -64,12 +65,14 @@ class UserController extends Controller
     }
 
     public function registerContinue($token) {
-        $registeredEmail = Crypt::decrypt($token);
-        $checkIfRegistered = User::where('email', $registeredEmail)->first();
+        //$registeredEmail = Crypt::decrypt($token);
+        $registeredId = Crypt::decrypt($token);
+        //$checkIfRegistered = User::where('email', $registeredEmail)->first();
+        $checkIfRegistered = User::where('id', $registeredId)->first();
         if (count($checkIfRegistered) == 0) {
             return view('register-no-email-match');
         }
-        return view('register-continue', ['email'=>$registeredEmail, 'id'=>$checkIfRegistered->id]);
+        return view('register-continue', ['email'=>$checkIfRegistered->email, 'id'=>$checkIfRegistered->id]);
     }
 
     public function postRegisterContinue(Request $request) {
