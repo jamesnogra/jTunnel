@@ -38,7 +38,7 @@ class UserController extends Controller
         return view('register-email-successful', ['email'=>$emailInput]);
     }
 
-    public function sendConfirmationRegistrationEmail($email, $id_encrypted. $user_id) {
+    public function sendConfirmationRegistrationEmail($email, $id_encrypted, $user_id) {
         $to = $email;
         $linkRgistration = action("UserController@registerContinue", [$user_id, $id_encrypted]);
         $subject = "jTunnel - Registration Email Confirmation";
