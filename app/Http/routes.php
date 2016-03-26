@@ -37,7 +37,7 @@ Route::group(['middleware' => ['web']], function () {
 
     Route::get('/register-user', 'UserController@register');
     Route::post('/register-user', 'UserController@postRegister');
-    Route::get('/register-continue/{token}', 'UserController@registerContinue');
+    Route::get('/register-continue/{user_id}/{token}', 'UserController@registerContinue');
     Route::post('/register-continue', 'UserController@postRegisterContinue');
     Route::get('/login', 'UserController@login');
     Route::post('/login', 'UserController@postLogin');
