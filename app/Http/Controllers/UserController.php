@@ -21,7 +21,7 @@ class UserController extends Controller
 
     public function postRegister(Request $request) {
         $emailInput = $request->input('email');
-        //$emailEncrypted = Crypt::encrypt($emailInput);
+        $emailEncrypted = Crypt::encrypt($emailInput);
 
         $new_user = new User;
         $new_user->email = $emailInput;
