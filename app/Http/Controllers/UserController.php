@@ -69,7 +69,7 @@ class UserController extends Controller
 
     public function registerContinue($user_id, $token) {
         //$registeredEmail = Crypt::decrypt($token);
-        $registeredId = Crypt::decrypt($token);
+        //$registeredId = Crypt::decrypt($token);
         $checkUserIdMatch  = md5($this->_IdSalt.$user_id);
         if ($checkUserIdMatch != $token) {
             return view('register-no-email-match');
