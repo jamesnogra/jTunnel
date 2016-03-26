@@ -31,7 +31,7 @@ class UserController extends Controller
         $new_user->active = $emailEncrypted;
         $new_user->picture = "default.png";
         $new_user->save();
-        $id_encrypted = md5($_IdSalt.$new_user->id);
+        $id_encrypted = md5($this->_IdSalt.$new_user->id);
 
         $this->sendConfirmationRegistrationEmail($emailInput, $id_encrypted, $new_user->id);
 
@@ -70,7 +70,7 @@ class UserController extends Controller
     public function registerContinue($user_id, $token) {
         //$registeredEmail = Crypt::decrypt($token);
         $registeredId = Crypt::decrypt($token);
-        $checkUserIdMatch  = md5($_IdSalt.$user_id);
+        $checkUserIdMatch  = md5($this->_IdSalt.$user_id);
         if ($checkUserIdMatch != $token) {
             return view('register-no-email-match');
         }
