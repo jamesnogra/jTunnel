@@ -11,6 +11,9 @@ use Auth;
 
 class UserController extends Controller
 {
+    
+    private $_IdSalt = "z23455Q812Y4D67d12g456f812D45E78";
+    
     public function index(Request $request) {
         return view('index');
     }
@@ -28,16 +31,16 @@ class UserController extends Controller
         $new_user->active = $emailEncrypted;
         $new_user->picture = "default.png";
         $new_user->save();
-        $id_encrypted = Crypt::encrypt($new_user->id);
+        $id_encrypted = md5($_IdSalt.$new_user->id);
 
-        $this->sendConfirmationRegistrationEmail($emailInput, $id_encrypted);
+        $this->sendConfirmationRegistrationEmail($emailInput, $id_encrypted, $new_user->id);
 
         return view('register-email-successful', ['email'=>$emailInput]);
     }
 
-    public function sendConfirmationRegistrationEmail($email, $id_encrypted) {
+    public function sendConfirmationRegistrationEmail($email, $id_encrypted. $user_id) {
         $to = $email;
-        $linkRgistration = action("UserController@registerContinue", [$id_encrypted]);
+        $linkRgistration = action("UserController@registerContinue", [$user_id, $id_encrypted]);
         $subject = "jTunnel - Registration Email Confirmation";
 
         $message = "
@@ -64,11 +67,15 @@ class UserController extends Controller
         mail($to,$subject,$message,$headers);
     }
 
-    public function registerContinue($token) {
+    public function registerContinue($user_id, $token) {
         //$registeredEmail = Crypt::decrypt($token);
         $registeredId = Crypt::decrypt($token);
+        $checkUserIdMatch  = md5($_IdSalt.$user_id);
+        if ($checkUserIdMatch != $token) {
+            return view('register-no-email-match');
+        }
         //$checkIfRegistered = User::where('email', $registeredEmail)->first();
-        $checkIfRegistered = User::where('id', $registeredId)->first();
+        $checkIfRegistered = User::where('id', ($user_id)->first();
         if (count($checkIfRegistered) == 0) {
             return view('register-no-email-match');
         }
