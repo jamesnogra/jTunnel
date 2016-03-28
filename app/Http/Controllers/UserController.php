@@ -46,10 +46,10 @@ class UserController extends Controller
                 </head>
                 <body>
                     <div style='color:#FFFFFF;background-color:#3f51b5;padding:10px;'>
-                        jTunnel - Registration Email Confirmation
+                        <h2>jTunnel - Registration Email Confirmation</h2>
                     </div>
                     <div style='padding:10px;'>
-                        To continue your registration, please <a href='$linkRgistration'>CLICK THIS LINK</a> or open this URL in a browser: ".$linkRgistration."
+                        To continue your registration, please <a href='$linkRgistration'>CLICK THIS LINK</a> or open this URL in a browser:<br/><br/>  ".$linkRgistration."
                     </div>
                 </body>
             </html>
