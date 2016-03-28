@@ -57,7 +57,7 @@ return [
             'host'      => env('DB_HOST', 'localhost'),
             'database'  => env('DB_DATABASE', 'james_tunnel'),
             'username'  => env('DB_USERNAME', 'james_tunnel'),
-            'password'  => env('DB_PASSWORD', '123pass_j_tunnel$'),
+            'password'  => env('DB_PASSWORD', ''),
             'charset'   => 'utf8',
             'collation' => 'utf8_unicode_ci',
             'prefix'    => '',

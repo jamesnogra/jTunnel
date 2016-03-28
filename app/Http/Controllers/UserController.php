@@ -11,6 +11,9 @@ use Auth;
 
 class UserController extends Controller
 {
+    
+    private $_IdSalt = "z23455Q812Y4D67d12g456f812D45E78";
+    
     public function index(Request $request) {
         return view('index');
     }
@@ -28,15 +31,16 @@ class UserController extends Controller
         $new_user->active = $emailEncrypted;
         $new_user->picture = "default.png";
         $new_user->save();
+        $id_encrypted = md5($this->_IdSalt.$new_user->id);
 
-        $this->sendConfirmationRegistrationEmail($emailInput, $emailEncrypted);
+        $this->sendConfirmationRegistrationEmail($emailInput, $id_encrypted, $new_user->id);
 
         return view('register-email-successful', ['email'=>$emailInput]);
     }
 
-    public function sendConfirmationRegistrationEmail($email, $emailEncrypted) {
+    public function sendConfirmationRegistrationEmail($email, $id_encrypted, $user_id) {
         $to = $email;
-        $linkRgistration = action("UserController@registerContinue", [$emailEncrypted]);
+        $linkRgistration = action("UserController@registerContinue", [$user_id, $id_encrypted]);
         $subject = "jTunnel - Registration Email Confirmation";
 
         $message = "
@@ -58,18 +62,24 @@ class UserController extends Controller
         // Always set content-type when sending HTML email
         $headers = "MIME-Version: 1.0" . "\r\n";
         $headers .= "Content-type:text/html;charset=UTF-8" . "\r\n";
-        $headers .= 'From: <admin@therookieblog.com>' . "\r\n";
+        $headers .= 'From: jTunnel Admin<no-reply@jtunnel.therookieblog.com>' . "\r\n";
 
         mail($to,$subject,$message,$headers);
     }
 
-    public function registerContinue($token) {
-        $registeredEmail = Crypt::decrypt($token);
-        $checkIfRegistered = User::where('email', $registeredEmail)->first();
+    public function registerContinue($user_id, $token) {
+        //$registeredEmail = Crypt::decrypt($token);
+        //$registeredId = Crypt::decrypt($token);
+        $checkUserIdMatch  = md5($this->_IdSalt.$user_id);
+        if ($checkUserIdMatch != $token) {
+            return view('register-no-email-match');
+        }
+        //$checkIfRegistered = User::where('email', $registeredEmail)->first();
+        $checkIfRegistered = User::where('id', $user_id)->first();
         if (count($checkIfRegistered) == 0) {
             return view('register-no-email-match');
         }
-        return view('register-continue', ['email'=>$registeredEmail, 'id'=>$checkIfRegistered->id]);
+        return view('register-continue', ['email'=>$checkIfRegistered->email, 'id'=>$checkIfRegistered->id]);
     }
 
     public function postRegisterContinue(Request $request) {
